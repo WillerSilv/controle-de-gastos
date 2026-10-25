@@ -1,5 +1,9 @@
 import { supabase } from './supabase'
 
+function urlDeRetorno() {
+  return new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString()
+}
+
 export async function entrar(email, senha) {
   if (!supabase) throw new Error('Supabase não configurado')
   const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha })
@@ -9,7 +13,11 @@ export async function entrar(email, senha) {
 
 export async function cadastrar(email, senha) {
   if (!supabase) throw new Error('Supabase não configurado')
-  const { data, error } = await supabase.auth.signUp({ email, password: senha })
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: senha,
+    options: { emailRedirectTo: urlDeRetorno() },
+  })
   if (error) throw error
   return data
 }
@@ -23,7 +31,7 @@ export async function sair() {
 export async function recuperarSenha(email) {
   if (!supabase) throw new Error('Supabase não configurado')
   const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-    redirectTo: window.location.origin,
+    redirectTo: urlDeRetorno(),
   })
   if (error) throw error
 }
