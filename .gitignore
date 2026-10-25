@@ -1,0 +1,16 @@
+# Ambientes e dependências locais
+.venv/
+**/__pycache__/
+controle-de-gastos/web/node_modules/
+
+# Builds e arquivos de ambiente
+controle-de-gastos/dist/
+controle-de-gastos/web/.env
+controle-de-gastos/web/.env.*
+!controle-de-gastos/web/.env.example
+
+# Dados locais e backups não publicados
+controle-de-gastos/backup/
+
+# Backend legado mantido apenas como backup local
+controle-de-gastos/sql/archive/
