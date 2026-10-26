@@ -9,6 +9,7 @@ O projeto começou como uma aplicação local em Python e SQLite. Durante o dese
 ## Tecnologias usadas
 
 - React e Vite para a interface;
+- FastAPI para a API Python em desenvolvimento;
 - Supabase para autenticação e banco de dados PostgreSQL;
 - JavaScript e CSS para as funcionalidades e o visual;
 
@@ -25,50 +26,12 @@ O projeto começou como uma aplicação local em Python e SQLite. Durante o dese
 - acompanhar gráficos de gastos, receitas e saldo;
 - criar categorias personalizadas além das categorias padrão.
 
-## Como executar no computador
-
-Você precisa ter o Node.js instalado.
-
-Abra o terminal na pasta `controle-de-gastos/web` e execute:
-
-```powershell
-npm install
-npm.cmd run dev
-```
-
-Depois, abra no navegador:
-
-```text
-http://localhost:5173
-```
-
-Para gerar e visualizar a versão de produção:
-
-```powershell
-npm.cmd run build
-npm.cmd run preview
-```
-
-## Configuração do Supabase
-
-1. Crie um projeto no Supabase.
-2. Abra o **SQL Editor** do projeto.
-3. Execute o conteúdo de `controle-de-gastos/sql/schema_supabase.sql`.
-4. Crie o arquivo `controle-de-gastos/web/.env` a partir de `controle-de-gastos/web/.env.example`.
-5. Preencha as variáveis com os dados do seu projeto:
-
-```env
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sua_chave_publica
-```
-
-O arquivo `.env` é local e não deve ser publicado. Ele já está protegido pelo `.gitignore`.
-
 ## Organização das pastas
 
 ```text
 controle-de-gastos/
 ├── web/                    # aplicação React atual
+├── backend/                # API Python em desenvolvimento
 ├── sql/
 │   ├── schema_supabase.sql # banco usado pela aplicação atual
 │   └── archive/            # scripts antigos do MySQL e SQLite
