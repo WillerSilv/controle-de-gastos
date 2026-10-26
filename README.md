@@ -9,7 +9,6 @@ O projeto começou como uma aplicação local em Python e SQLite. Durante o dese
 ## Tecnologias usadas
 
 - React e Vite para a interface;
-- FastAPI para a API Python em desenvolvimento;
 - Supabase para autenticação e banco de dados PostgreSQL;
 - JavaScript e CSS para as funcionalidades e o visual;
 
@@ -31,7 +30,6 @@ O projeto começou como uma aplicação local em Python e SQLite. Durante o dese
 ```text
 controle-de-gastos/
 ├── web/                    # aplicação React atual
-├── backend/                # API Python em desenvolvimento
 ├── sql/
 │   ├── schema_supabase.sql # banco usado pela aplicação atual
 │   └── archive/            # scripts antigos do MySQL e SQLite
