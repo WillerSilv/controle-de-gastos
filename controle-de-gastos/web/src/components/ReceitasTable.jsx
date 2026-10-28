@@ -62,11 +62,11 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
       {/* Header and Action */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#f8fafc' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-main)' }}>
             Receitas e Entradas
           </h2>
-          <p style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Total de {receitasFiltradas.length} receitas • Total: <strong style={{ color: '#10b981' }}>{formatarMoeda(totalFiltrado)}</strong>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+            Total de {receitasFiltradas.length} receitas • Total: <strong style={{ color: 'var(--success)' }}>{formatarMoeda(totalFiltrado)}</strong>
           </p>
         </div>
 
@@ -79,12 +79,12 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
             padding: '10px 20px',
             borderRadius: '10px',
             border: 'none',
-            background: '#10b981',
+            background: 'var(--success)',
             color: '#fff',
             fontWeight: 600,
             fontSize: '14px',
             cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
+            boxShadow: 'none'
           }}
         >
           <Plus size={16} /> Nova Receita
@@ -92,9 +92,9 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
       </div>
 
       {/* Filter Bar */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+      <div className="surface-panel" style={{ padding: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
         <div style={{ flex: '1 1 240px', position: 'relative' }}>
-          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Buscar por descrição..."
@@ -104,9 +104,9 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
               width: '100%',
               padding: '10px 12px 10px 38px',
               borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              background: '#0f172a',
-              color: '#f8fafc',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-primary)',
+              color: 'var(--text-main)',
               fontSize: '13px',
             }}
           />
@@ -114,7 +114,7 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
 
         {/* Fonte Filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Briefcase size={15} color="#94a3b8" />
+          <Briefcase size={15} color="var(--text-muted)" />
           <select
             value={fonteFiltro}
             onChange={(e) => setFonteFiltro(e.target.value)}
@@ -129,7 +129,7 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
 
         {/* Mes Filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Calendar size={15} color="#94a3b8" />
+          <Calendar size={15} color="var(--text-muted)" />
           <select
             value={mesFiltro}
             onChange={(e) => setMesFiltro(e.target.value)}
@@ -147,11 +147,11 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
       </div>
 
       {/* Table */}
-      <div className="glass-panel" style={{ overflow: 'hidden' }}>
+      <div className="surface-panel" style={{ overflow: 'hidden' }}>
         <div className="table-scroll" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)', color: '#94a3b8' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--border-color)', color: 'var(--text-muted)' }}>
                 <ThOrdenavel campo="data" ordem={ordem} setOrdem={setOrdem}>Data</ThOrdenavel>
                 <ThOrdenavel campo="descricao" ordem={ordem} setOrdem={setOrdem}>Descrição</ThOrdenavel>
                 <ThOrdenavel campo="fonte" ordem={ordem} setOrdem={setOrdem}>Fonte</ThOrdenavel>
@@ -162,7 +162,7 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
             <tbody>
               {receitasOrdenadas.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>
+                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>
                     Nenhuma receita encontrada para os filtros selecionados.
                   </td>
                 </tr>
@@ -171,14 +171,14 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
                   <tr
                     key={r.id}
                     style={{
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                      borderBottom: '1px solid var(--border-color)',
                       transition: 'background 0.2s'
                     }}
                   >
-                    <td style={{ padding: '14px 20px', color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
+                    <td style={{ padding: '14px 20px', color: 'var(--text-muted)', fontFamily: 'var(--font-family)', fontSize: '13px' }}>
                       {r.data}
                     </td>
-                    <td style={{ padding: '14px 20px', fontWeight: 500, color: '#f8fafc' }}>
+                    <td style={{ padding: '14px 20px', fontWeight: 500, color: 'var(--text-main)' }}>
                       {r.descricao}
                     </td>
                     <td style={{ padding: '14px 20px' }}>
@@ -188,13 +188,13 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
                         fontSize: '12px',
                         fontWeight: 500,
                         background: 'rgba(16, 185, 129, 0.15)',
-                        color: '#10b981',
+                        color: 'var(--success)',
                         border: '1px solid rgba(16, 185, 129, 0.2)'
                       }}>
                         {r.fonte}
                       </span>
                     </td>
-                    <td style={{ padding: '14px 20px', textAlign: 'right', fontWeight: 600, color: '#10b981', fontFamily: 'JetBrains Mono, monospace' }}>
+                    <td style={{ padding: '14px 20px', textAlign: 'right', fontWeight: 600, color: 'var(--success)', fontFamily: 'var(--font-family)' }}>
                       {formatarMoeda(r.valor)}
                     </td>
                     <td style={{ padding: '14px 20px', textAlign: 'center' }}>
@@ -203,11 +203,11 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
                           onClick={() => onEditarReceita(r)}
                           title="Editar receita"
                           style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            background: 'var(--border-color)',
+                            border: '1px solid var(--border-color)',
                             borderRadius: '8px',
                             padding: '6px',
-                            color: '#94a3b8',
+                            color: 'var(--text-muted)',
                             cursor: 'pointer'
                           }}
                         >
@@ -221,7 +221,7 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
                             border: '1px solid rgba(239, 68, 68, 0.2)',
                             borderRadius: '8px',
                             padding: '6px',
-                            color: '#ef4444',
+                            color: 'var(--danger)',
                             cursor: 'pointer'
                           }}
                         >
@@ -235,11 +235,11 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
             </tbody>
             {receitasOrdenadas.length > 0 && (
               <tfoot>
-                <tr style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)' }}>
-                  <td colSpan={3} style={{ padding: '14px 20px', color: '#94a3b8', fontWeight: 600 }}>
+                <tr style={{ borderTop: '1px solid var(--border-color)', background: 'var(--border-color)' }}>
+                  <td colSpan={3} style={{ padding: '14px 20px', color: 'var(--text-muted)', fontWeight: 600 }}>
                     Total ({receitasOrdenadas.length} {receitasOrdenadas.length === 1 ? 'receita' : 'receitas'})
                   </td>
-                  <td style={{ padding: '14px 20px', textAlign: 'right', color: '#10b981', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+                  <td style={{ padding: '14px 20px', textAlign: 'right', color: 'var(--success)', fontFamily: 'var(--font-family)', fontWeight: 700 }}>
                     {formatarMoeda(totalFiltrado)}
                   </td>
                   <td />
@@ -256,9 +256,9 @@ export default function ReceitasTable({ receitas, config, onNovaReceita, onEdita
 const selectFilterStyle = {
   padding: '8px 12px',
   borderRadius: '8px',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  background: '#0f172a',
-  color: '#f8fafc',
+  border: '1px solid var(--border-color)',
+  background: 'var(--bg-primary)',
+  color: 'var(--text-main)',
   fontSize: '13px',
   cursor: 'pointer'
 };

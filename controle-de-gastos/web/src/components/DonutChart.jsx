@@ -5,7 +5,7 @@ export default function DonutChart({ dados, centroSubtitulo }) {
 
   if (!dados || dados.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b', fontSize: '14px' }}>
+      <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-dim)', fontSize: '14px' }}>
         Nenhum dado para exibir neste gráfico.
       </div>
     );
@@ -14,7 +14,7 @@ export default function DonutChart({ dados, centroSubtitulo }) {
   const total = dados.reduce((acc, d) => acc + (d.value || 0), 0);
   if (total <= 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b', fontSize: '14px' }}>
+      <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-dim)', fontSize: '14px' }}>
         Total zerado no período selecionado.
       </div>
     );
@@ -56,7 +56,7 @@ export default function DonutChart({ dados, centroSubtitulo }) {
             cy="90"
             r={radius}
             fill="transparent"
-            stroke="rgba(255, 255, 255, 0.05)"
+            stroke="var(--border-color)"
             strokeWidth={strokeWidth}
           />
           {/* Fatias do Donut */}
@@ -93,20 +93,20 @@ export default function DonutChart({ dados, centroSubtitulo }) {
           pointerEvents: 'none',
           maxWidth: '120px'
         }}>
-          <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', fontWeight: 500 }}>
+          <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', fontWeight: 500 }}>
             {itemAtivo ? itemAtivo.label : (centroSubtitulo || 'Total')}
           </span>
           <span style={{
             fontSize: '15px',
             fontWeight: 700,
-            color: itemAtivo ? itemAtivo.color : '#f8fafc',
-            fontFamily: 'JetBrains Mono, monospace',
+            color: itemAtivo ? itemAtivo.color : 'var(--text-main)',
+            fontFamily: 'var(--font-family)',
             display: 'block'
           }}>
             {itemAtivo ? formatarMoeda(itemAtivo.value) : formatarMoeda(total)}
           </span>
           {itemAtivo && (
-            <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>
               {itemAtivo.percentual}%
             </span>
           )}
@@ -128,17 +128,17 @@ export default function DonutChart({ dados, centroSubtitulo }) {
                 gap: '8px',
                 padding: '6px 10px',
                 borderRadius: '8px',
-                background: isHover ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                background: isHover ? 'var(--border-color)' : 'var(--border-color)',
                 cursor: 'pointer',
                 transition: 'background 0.2s'
               }}
             >
               <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
               <div style={{ overflow: 'hidden', width: '100%' }}>
-                <div style={{ fontSize: '12px', color: '#f8fafc', fontWeight: 500, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 500, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                   {item.label}
                 </div>
-                <div style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-family)' }}>
                   {formatarMoeda(item.value)} ({item.percentual}%)
                 </div>
               </div>

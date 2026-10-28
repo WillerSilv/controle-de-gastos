@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { LayoutDashboard, TrendingDown, TrendingUp, PiggyBank, Calendar, Repeat, Target, FileUp, LogOut, MoreHorizontal } from 'lucide-react';
+import { LayoutDashboard, TrendingDown, TrendingUp, SlidersHorizontal, Repeat, Target, FileUp, LogOut, MoreHorizontal } from 'lucide-react';
 import { sair, usuarioAtual } from '../lib/auth';
+import SeletorMes from './SeletorMes';
 
 export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, setMesSelecionado }) {
   const [usuario, setUsuario] = useState(user || null);
@@ -14,9 +15,9 @@ export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, se
   const conta = user || usuario;
   return (
     <header className="app-header" style={{
-      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-      background: 'rgba(15, 23, 42, 0.85)',
-      backdropFilter: 'blur(16px)',
+      borderBottom: '1px solid var(--border-color)',
+      background: 'var(--bg-secondary)',
+      backdropFilter: 'none',
       position: 'sticky',
       top: 0,
       zIndex: 50
@@ -33,11 +34,11 @@ export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, se
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.02em', color: '#f8fafc' }}>
+            <h1 style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
               Controle de Gastos
             </h1>
-            <span className="nav-subtitle" style={{ fontSize: '12px', color: '#94a3b8' }}>
-              Gestão Financeira Pessoal
+            <span className="nav-subtitle" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+              Seu dinheiro, mês a mês
             </span>
           </div>
         </div>
@@ -45,13 +46,13 @@ export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, se
         {/* Navigation Tabs */}
         <nav className="nav-tabs" style={{ display: 'flex', gap: '6px' }}>
           {[
-            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            { id: 'dashboard', label: 'Resumo', icon: LayoutDashboard },
             { id: 'gastos', label: 'Gastos', icon: TrendingDown },
             { id: 'receitas', label: 'Receitas', icon: TrendingUp },
-            { id: 'orcamento', label: 'Orçamento', icon: PiggyBank },
+            { id: 'orcamento', label: 'Orçamento', icon: SlidersHorizontal },
             { id: 'recorrencias', label: 'Recorrentes', icon: Repeat },
             { id: 'metas', label: 'Metas', icon: Target },
-            { id: 'importar', label: 'Importar/Exportar', icon: FileUp },
+            { id: 'importar', label: 'Arquivos', icon: FileUp },
           ].map((item) => {
             const Icon = item.icon;
             const ativo = abaAtiva === item.id;
@@ -71,12 +72,12 @@ export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, se
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: ativo ? 600 : 500,
-                  color: ativo ? '#f8fafc' : '#94a3b8',
-                  background: ativo ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
+                  color: ativo ? 'var(--text-main)' : 'var(--text-muted)',
+                  background: ativo ? 'var(--primary-light)' : 'transparent',
                   transition: 'all 0.2s',
                 }}
               >
-                <Icon size={16} color={ativo ? '#818cf8' : '#64748b'} />
+                <Icon size={16} color={ativo ? 'var(--primary)' : 'var(--text-dim)'} />
                 {item.label}
               </button>
             );
@@ -96,7 +97,7 @@ export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, se
                 {[
                   ['recorrencias', 'Recorrentes', Repeat],
                   ['metas', 'Metas', Target],
-                  ['importar', 'Importar/Exportar', FileUp],
+                  ['importar', 'Arquivos', FileUp],
                 ].map(([id, label, Icon]) => (
                   <button key={id} type="button" onClick={() => { setAbaAtiva(id); setMaisAberto(false); }}>
                     <Icon size={15} aria-hidden="true" /> {label}
@@ -109,18 +110,7 @@ export default function Navbar({ user, abaAtiva, setAbaAtiva, mesSelecionado, se
 
         {/* Month and account controls */}
         <div className="nav-tools">
-          <label className="nav-mes">
-            <Calendar size={16} color="#94a3b8" aria-hidden="true" />
-            <span className="sr-only">Selecionar mes</span>
-            <input
-              type="month"
-              aria-label="Selecionar mes"
-              value={mesSelecionado || ''}
-              min="2000-01"
-              max="2100-12"
-              onChange={(e) => setMesSelecionado(e.target.value)}
-            />
-          </label>
+          <SeletorMes value={mesSelecionado} onChange={setMesSelecionado} />
           <div className="nav-account">
             <span className="nav-account-email" title={conta?.email || 'Conta conectada'}>
               {conta?.email || 'Conta conectada'}

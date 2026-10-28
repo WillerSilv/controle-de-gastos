@@ -66,11 +66,11 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
       {/* Header and Action */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#f8fafc' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-main)' }}>
             Despesas e Gastos
           </h2>
-          <p style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Total de {gastosFiltrados.length} gastos encontrados • Total: <strong style={{ color: '#ef4444' }}>{formatarMoeda(totalFiltrado)}</strong>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+            Total de {gastosFiltrados.length} gastos encontrados • Total: <strong style={{ color: 'var(--danger)' }}>{formatarMoeda(totalFiltrado)}</strong>
           </p>
         </div>
 
@@ -83,12 +83,12 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
             padding: '10px 20px',
             borderRadius: '10px',
             border: 'none',
-            background: '#6366f1',
+            background: 'var(--primary-strong)',
             color: '#fff',
             fontWeight: 600,
             fontSize: '14px',
             cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)'
+            boxShadow: 'none'
           }}
         >
           <Plus size={16} /> Novo Gasto
@@ -96,10 +96,10 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
       </div>
 
       {/* Filter Bar */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+      <div className="surface-panel" style={{ padding: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
         {/* Search */}
         <div style={{ flex: '1 1 240px', position: 'relative' }}>
-          <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Buscar por descrição..."
@@ -109,9 +109,9 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
               width: '100%',
               padding: '10px 12px 10px 38px',
               borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              background: '#0f172a',
-              color: '#f8fafc',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-primary)',
+              color: 'var(--text-main)',
               fontSize: '13px',
             }}
           />
@@ -119,7 +119,7 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
 
         {/* Categoria Filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Tag size={15} color="#94a3b8" />
+          <Tag size={15} color="var(--text-muted)" />
           <select
             value={categoriaFiltro}
             onChange={(e) => setCategoriaFiltro(e.target.value)}
@@ -134,7 +134,7 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
 
         {/* Mes Filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Calendar size={15} color="#94a3b8" />
+          <Calendar size={15} color="var(--text-muted)" />
           <select
             value={mesFiltro}
             onChange={(e) => setMesFiltro(e.target.value)}
@@ -152,11 +152,11 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
       </div>
 
       {/* Table */}
-      <div className="glass-panel" style={{ overflow: 'hidden' }}>
+      <div className="surface-panel" style={{ overflow: 'hidden' }}>
         <div className="table-scroll" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)', color: '#94a3b8' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--border-color)', color: 'var(--text-muted)' }}>
                 <ThOrdenavel campo="data" ordem={ordem} setOrdem={setOrdem}>Data</ThOrdenavel>
                 <ThOrdenavel campo="descricao" ordem={ordem} setOrdem={setOrdem}>Descrição</ThOrdenavel>
                 <ThOrdenavel campo="categoria" ordem={ordem} setOrdem={setOrdem}>Categoria</ThOrdenavel>
@@ -168,7 +168,7 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
             <tbody>
               {gastosOrdenados.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>
+                  <td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>
                     Nenhum gasto encontrado para os filtros selecionados.
                   </td>
                 </tr>
@@ -177,14 +177,14 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
                   <tr
                     key={g.id}
                     style={{
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                      borderBottom: '1px solid var(--border-color)',
                       transition: 'background 0.2s'
                     }}
                   >
-                    <td style={{ padding: '14px 20px', color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
+                    <td style={{ padding: '14px 20px', color: 'var(--text-muted)', fontFamily: 'var(--font-family)', fontSize: '13px' }}>
                       {g.data}
                     </td>
-                    <td style={{ padding: '14px 20px', fontWeight: 500, color: '#f8fafc' }}>
+                    <td style={{ padding: '14px 20px', fontWeight: 500, color: 'var(--text-main)' }}>
                       {g.descricao}
                     </td>
                     <td style={{ padding: '14px 20px' }}>
@@ -194,18 +194,18 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
                         fontSize: '12px',
                         fontWeight: 500,
                         background: 'rgba(99, 102, 241, 0.15)',
-                        color: '#818cf8',
+                        color: 'var(--primary)',
                         border: '1px solid rgba(99, 102, 241, 0.2)'
                       }}>
                         {g.categoria}
                       </span>
                     </td>
                     <td style={{ padding: '14px 20px' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94a3b8', fontSize: '13px' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '13px' }}>
                         <CreditCard size={13} /> {g.pagamento}
                       </span>
                     </td>
-                    <td style={{ padding: '14px 20px', textAlign: 'right', fontWeight: 600, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace' }}>
+                    <td style={{ padding: '14px 20px', textAlign: 'right', fontWeight: 600, color: 'var(--danger)', fontFamily: 'var(--font-family)' }}>
                       {formatarMoeda(g.valor)}
                     </td>
                     <td style={{ padding: '14px 20px', textAlign: 'center' }}>
@@ -214,11 +214,11 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
                           onClick={() => onEditarGasto(g)}
                           title="Editar gasto"
                           style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            background: 'var(--border-color)',
+                            border: '1px solid var(--border-color)',
                             borderRadius: '8px',
                             padding: '6px',
-                            color: '#94a3b8',
+                            color: 'var(--text-muted)',
                             cursor: 'pointer'
                           }}
                         >
@@ -232,7 +232,7 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
                             border: '1px solid rgba(239, 68, 68, 0.2)',
                             borderRadius: '8px',
                             padding: '6px',
-                            color: '#ef4444',
+                            color: 'var(--danger)',
                             cursor: 'pointer'
                           }}
                         >
@@ -246,11 +246,11 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
             </tbody>
             {gastosOrdenados.length > 0 && (
               <tfoot>
-                <tr style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(255, 255, 255, 0.02)' }}>
-                  <td colSpan={4} style={{ padding: '14px 20px', color: '#94a3b8', fontWeight: 600 }}>
+                <tr style={{ borderTop: '1px solid var(--border-color)', background: 'var(--border-color)' }}>
+                  <td colSpan={4} style={{ padding: '14px 20px', color: 'var(--text-muted)', fontWeight: 600 }}>
                     Total ({gastosOrdenados.length} {gastosOrdenados.length === 1 ? 'gasto' : 'gastos'})
                   </td>
-                  <td style={{ padding: '14px 20px', textAlign: 'right', color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+                  <td style={{ padding: '14px 20px', textAlign: 'right', color: 'var(--danger)', fontFamily: 'var(--font-family)', fontWeight: 700 }}>
                     {formatarMoeda(totalFiltrado)}
                   </td>
                   <td />
@@ -267,9 +267,9 @@ export default function GastosTable({ gastos, config, onNovoGasto, onEditarGasto
 const selectFilterStyle = {
   padding: '8px 12px',
   borderRadius: '8px',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  background: '#0f172a',
-  color: '#f8fafc',
+  border: '1px solid var(--border-color)',
+  background: 'var(--bg-primary)',
+  color: 'var(--text-main)',
   fontSize: '13px',
   cursor: 'pointer'
 };

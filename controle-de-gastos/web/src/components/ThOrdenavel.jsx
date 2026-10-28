@@ -34,12 +34,12 @@ export default function ThOrdenavel({ campo, ordem, setOrdem, align = 'left', ch
           padding: 0,
           font: 'inherit',
           fontWeight: ativo ? 700 : 'inherit',
-          color: ativo ? '#f8fafc' : 'inherit',
+          color: ativo ? 'var(--text-main)' : 'inherit',
           cursor: 'pointer',
         }}
       >
         {children}
-        <Icone size={13} color={ativo ? '#818cf8' : '#64748b'} aria-hidden="true" />
+        <Icone size={13} color={ativo ? 'var(--primary)' : 'var(--text-dim)'} aria-hidden="true" />
       </button>
     </th>
   );

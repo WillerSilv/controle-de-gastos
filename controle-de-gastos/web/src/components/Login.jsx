@@ -48,8 +48,8 @@ export default function Login({ onAuthenticated }) {
       <form className="login-card" onSubmit={enviar}>
         <h1>Controle de Gastos</h1>
         <p>{modoCadastro ? 'Crie sua conta' : 'Entre na sua conta'}</p>
-        <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} minLength={6} required />
+        <label>E-mail<input autoComplete="email" type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required /></label>
+        <label>Senha<input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} autoComplete={modoCadastro ? "new-password" : "current-password"} minLength={6} required /></label>
         <button type="submit" disabled={carregando}>{carregando ? 'Aguarde...' : modoCadastro ? 'Criar conta' : 'Entrar'}</button>
         {mensagem && <p role="status">{mensagem}</p>}
         {!modoCadastro && <button type="button" onClick={esquecerSenha} disabled={carregando}>Esqueci minha senha</button>}

@@ -17,9 +17,9 @@ export default function Toast({ toast, onClose }) {
       gap: '12px',
       padding: '12px 20px',
       borderRadius: '12px',
-      background: isError ? '#ef4444' : '#10b981',
+      background: isError ? 'var(--danger)' : 'var(--success)',
       color: '#fff',
-      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)',
+      boxShadow: 'none',
       fontWeight: 500,
       fontSize: '14px',
       animation: 'fadeIn 0.2s ease-out'

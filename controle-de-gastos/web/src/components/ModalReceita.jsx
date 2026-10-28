@@ -60,7 +60,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
       position: 'fixed',
       inset: 0,
       background: 'rgba(0, 0, 0, 0.7)',
-      backdropFilter: 'blur(6px)',
+      backdropFilter: 'none',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -68,23 +68,23 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
       padding: '16px'
     }}>
       <div style={{
-        background: '#1e293b',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-color)',
         borderRadius: '20px',
         width: '100%',
         maxWidth: '480px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+        boxShadow: 'none',
         overflow: 'hidden'
       }}>
         {/* Header */}
         <div style={{
           padding: '20px 24px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--border-color)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#f8fafc' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-main)' }}>
             {itemParaEditar ? 'Editar Receita' : 'Nova Receita'}
           </h3>
           <button
@@ -92,7 +92,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               cursor: 'pointer',
               padding: '4px',
               borderRadius: '8px'
@@ -108,7 +108,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
             <div style={{
               background: 'rgba(239, 68, 68, 0.15)',
               border: '1px solid rgba(239, 68, 68, 0.3)',
-              color: '#fca5a5',
+              color: 'var(--danger)',
               padding: '10px 14px',
               borderRadius: '10px',
               fontSize: '13px'
@@ -118,7 +118,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
           )}
 
           <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', marginBottom: '6px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)', marginBottom: '6px' }}>
               <Calendar size={14} /> Data
             </label>
             <input
@@ -132,7 +132,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
           </div>
 
           <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', marginBottom: '6px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)', marginBottom: '6px' }}>
               <FileText size={14} /> Descrição
             </label>
             <input
@@ -145,7 +145,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
           </div>
 
           <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', marginBottom: '6px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)', marginBottom: '6px' }}>
               <Briefcase size={14} /> Fonte da Receita
             </label>
             <input list="fontes-receita" aria-label="Fonte da receita" value={fonte} onChange={(e) => setFonte(e.target.value)} required maxLength={100} placeholder="Escolha ou digite uma nova" style={selectStyle} />
@@ -153,7 +153,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
           </div>
 
           <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', marginBottom: '6px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)', marginBottom: '6px' }}>
               <DollarSign size={14} /> Valor (R$)
             </label>
             <input
@@ -161,7 +161,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
               placeholder="ex: 3500.00"
               value={valor}
               onChange={(e) => setValor(e.target.value)}
-              style={{ ...inputStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: '16px' }}
+              style={{ ...inputStyle, fontFamily: 'var(--font-family)', fontSize: '16px' }}
             />
           </div>
 
@@ -171,8 +171,8 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
               onClick={onClose}
               style={{
                 background: 'transparent',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#cbd5e1',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-main)',
                 padding: '10px 18px',
                 borderRadius: '10px',
                 cursor: 'pointer',
@@ -185,7 +185,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
             <button
               type="submit"
               style={{
-                background: '#10b981',
+                background: 'var(--success)',
                 border: 'none',
                 color: '#fff',
                 padding: '10px 22px',
@@ -193,7 +193,7 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
                 cursor: 'pointer',
                 fontWeight: 600,
                 fontSize: '14px',
-                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
+                boxShadow: 'none'
               }}
             >
               {itemParaEditar ? 'Salvar Alterações' : 'Cadastrar Receita'}
@@ -208,10 +208,10 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
 const inputStyle = {
   width: '100%',
   padding: '10px 14px',
-  background: '#0f172a',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
+  background: 'var(--bg-primary)',
+  border: '1px solid var(--border-color)',
   borderRadius: '10px',
-  color: '#f8fafc',
+  color: 'var(--text-main)',
   fontSize: '14px',
   boxSizing: 'border-box'
 };
@@ -219,10 +219,10 @@ const inputStyle = {
 const selectStyle = {
   width: '100%',
   padding: '10px 14px',
-  background: '#0f172a',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
+  background: 'var(--bg-primary)',
+  border: '1px solid var(--border-color)',
   borderRadius: '10px',
-  color: '#f8fafc',
+  color: 'var(--text-main)',
   fontSize: '14px',
   boxSizing: 'border-box',
   cursor: 'pointer'

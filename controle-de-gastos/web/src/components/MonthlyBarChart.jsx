@@ -68,42 +68,42 @@ export default function MonthlyBarChart({ dados, orcamento }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '8px 16px', fontSize: '12px' }}>
         {[
-          ['#10b981', 'Receitas'],
-          ['#ef4444', 'Gastos'],
-          ['#38bdf8', 'Saldo'],
+          ['var(--success)', 'Receitas'],
+          ['var(--danger)', 'Gastos'],
+          ['#28648c', 'Saldo'],
         ].map(([cor, rotulo]) => (
           <div key={rotulo} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={rotulo === 'Saldo'
               ? { width: '16px', borderTop: `2px solid ${cor}` }
               : { width: '12px', height: '12px', borderRadius: '3px', background: cor }} />
-            <span style={{ color: '#94a3b8' }}>{rotulo}</span>
+            <span style={{ color: 'var(--text-muted)' }}>{rotulo}</span>
           </div>
         ))}
         {orcamento ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '16px', borderTop: '2px dashed #f59e0b' }} />
-            <span style={{ color: '#f59e0b' }}>Orçamento ({formatarMoeda(orcamento)})</span>
+            <div style={{ width: '16px', borderTop: '2px dashed var(--warning)' }} />
+            <span style={{ color: 'var(--warning)' }}>Orçamento ({formatarMoeda(orcamento)})</span>
           </div>
         ) : null}
       </div>
 
       <div ref={caixaRef} style={{ width: '100%' }}>
         {largura > 0 && (
-          <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }} role="img"
+          <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', maxWidth: '100%' }} role="img"
                aria-label="Evolução mensal de receitas, gastos e saldo">
             {escala.marcas.map((valor) => (
               <g key={valor}>
                 <line x1={MARGEM.esq} y1={yDe(valor)} x2={W - MARGEM.dir} y2={yDe(valor)}
-                      stroke={valor === 0 ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.07)'}
+                      stroke={valor === 0 ? 'var(--border-color)' : 'var(--border-color)'}
                       strokeDasharray={valor === 0 ? undefined : '4 4'} />
-                <text x={MARGEM.esq - 8} y={yDe(valor) + 4} textAnchor="end" fill="#64748b" fontSize="11"
-                      fontFamily="JetBrains Mono, monospace">{fmtEixo(valor)}</text>
+                <text x={MARGEM.esq - 8} y={yDe(valor) + 4} textAnchor="end" fill="var(--text-dim)" fontSize="11"
+                      fontFamily="var(--font-family)">{fmtEixo(valor)}</text>
               </g>
             ))}
 
             {orcamento ? (
               <line x1={MARGEM.esq} y1={yDe(orcamento)} x2={W - MARGEM.dir} y2={yDe(orcamento)}
-                    stroke="#f59e0b" strokeWidth="2" strokeDasharray="6 4" />
+                    stroke="var(--warning)" strokeWidth="2" strokeDasharray="6 4" />
             ) : null}
 
             {meses.map((item, indice) => {
@@ -121,12 +121,12 @@ export default function MonthlyBarChart({ dados, orcamento }) {
                         height={areaH + MARGEM.base} fill="transparent" />
                   <rect x={centro - larguraBarra - espaco / 2} y={Math.min(yReceita, yZero)}
                         width={larguraBarra} height={Math.max(Math.abs(yZero - yReceita), item.receitas ? 2 : 0)}
-                        rx="3" fill="#10b981" opacity={apagado} />
+                        rx="3" fill="var(--success)" opacity={apagado} />
                   <rect x={centro + espaco / 2} y={Math.min(yGasto, yZero)}
                         width={larguraBarra} height={Math.max(Math.abs(yZero - yGasto), item.gastos ? 2 : 0)}
-                        rx="3" fill="#ef4444" opacity={apagado} />
+                        rx="3" fill="var(--danger)" opacity={apagado} />
                   <text x={centro} y={H - 8} textAnchor="middle" fontSize={W < 480 ? 10 : 11}
-                        fill={ativo ? '#f8fafc' : '#94a3b8'} fontWeight={ativo ? 700 : 500}>
+                        fill={ativo ? 'var(--text-main)' : 'var(--text-muted)'} fontWeight={ativo ? 700 : 500}>
                     {W < 480 && indice % 2 === 1 ? '' : (mes && ano ? `${mes}/${ano.slice(2)}` : item.mes)}
                   </text>
                 </g>
@@ -134,31 +134,31 @@ export default function MonthlyBarChart({ dados, orcamento }) {
             })}
 
             <polyline points={pontosSaldo.map((ponto) => `${ponto.x},${ponto.y}`).join(' ')}
-                      fill="none" stroke="#38bdf8" strokeWidth="2.5" pointerEvents="none" />
+                      fill="none" stroke="#28648c" strokeWidth="2.5" pointerEvents="none" />
             {pontosSaldo.map(({ x, y, item }) => (
               <circle key={item.mes} cx={x} cy={y} r={selecionado === item.mes ? 5 : 3.5}
-                      fill="#38bdf8" stroke="#0f172a" strokeWidth="2" pointerEvents="none" />
+                      fill="#28648c" stroke="var(--bg-primary)" strokeWidth="2" pointerEvents="none" />
             ))}
           </svg>
         )}
       </div>
 
-      <div style={{ minHeight: '44px', padding: '10px 16px', background: '#1e293b', borderRadius: '10px',
-                    border: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between',
+      <div style={{ minHeight: '44px', padding: '10px 16px', background: 'var(--bg-secondary)', borderRadius: '10px',
+                    border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between',
                     alignItems: 'center', flexWrap: 'wrap', gap: '6px 16px', fontSize: '13px' }}>
         {itemAtivo ? (
           <>
             <div>
-              <strong style={{ color: '#f8fafc' }}>{fmtMes(itemAtivo.mes)}:</strong>{' '}
-              <span style={{ color: '#10b981' }}>Receitas {formatarMoeda(itemAtivo.receitas)}</span>{' | '}
-              <span style={{ color: '#ef4444' }}>Gastos {formatarMoeda(itemAtivo.gastos)}</span>
+              <strong style={{ color: 'var(--text-main)' }}>{fmtMes(itemAtivo.mes)}:</strong>{' '}
+              <span style={{ color: 'var(--success)' }}>Receitas {formatarMoeda(itemAtivo.receitas)}</span>{' | '}
+              <span style={{ color: 'var(--danger)' }}>Gastos {formatarMoeda(itemAtivo.gastos)}</span>
             </div>
-            <strong style={{ color: itemAtivo.saldo >= 0 ? '#38bdf8' : '#ef4444', fontFamily: 'JetBrains Mono, monospace' }}>
+            <strong style={{ color: itemAtivo.saldo >= 0 ? '#28648c' : 'var(--danger)', fontFamily: 'var(--font-family)' }}>
               Saldo {formatarMoeda(itemAtivo.saldo)}
             </strong>
           </>
         ) : (
-          <span style={{ color: '#64748b' }}>
+          <span style={{ color: 'var(--text-dim)' }}>
             {temDados ? 'Passe o mouse ou toque em um mês para ver os valores.' : 'Nenhuma movimentação nos últimos 12 meses.'}
           </span>
         )}
