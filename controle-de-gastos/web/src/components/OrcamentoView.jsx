@@ -8,7 +8,7 @@ const statusConfig = {
   excedido: { label: 'Limite excedido', color: '#ef4444' },
 };
 
-export default function OrcamentoView({ orcamentoInfo, resumo, mesSelecionado, orcamentosCategoria, onSalvarOrcamento, onSalvarOrcamentoCategoria, onExcluirOrcamentoCategoria }) {
+export default function OrcamentoView({ config, orcamentoInfo, resumo, mesSelecionado, orcamentosCategoria, onSalvarOrcamento, onSalvarOrcamentoCategoria, onExcluirOrcamentoCategoria }) {
   const [valor, setValor] = useState('');
   const [alerta, setAlerta] = useState('80');
   const [salvando, setSalvando] = useState(false);

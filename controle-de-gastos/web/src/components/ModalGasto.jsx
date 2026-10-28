@@ -155,15 +155,8 @@ export default function ModalGasto({ isOpen, onClose, onSave, itemParaEditar, co
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', marginBottom: '6px' }}>
                 <Tag size={14} /> Categoria
               </label>
-              <select
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
-                style={selectStyle}
-              >
-                {config.categorias.map((c) => (
-                  <option key={c} value={c} style={{ background: '#1e293b' }}>{c}</option>
-                ))}
-              </select>
+              <input list="categorias-gasto" aria-label="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} required maxLength={100} placeholder="Escolha ou digite uma nova" style={selectStyle} />
+              <datalist id="categorias-gasto">{config.categorias.map(item => <option key={item} value={item} />)}</datalist>
             </div>
 
             <div>

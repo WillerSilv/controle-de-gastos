@@ -148,15 +148,8 @@ export default function ModalReceita({ isOpen, onClose, onSave, itemParaEditar, 
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500, color: '#94a3b8', marginBottom: '6px' }}>
               <Briefcase size={14} /> Fonte da Receita
             </label>
-            <select
-              value={fonte}
-              onChange={(e) => setFonte(e.target.value)}
-              style={selectStyle}
-            >
-              {config.fontes_receita.map((f) => (
-                <option key={f} value={f} style={{ background: '#1e293b' }}>{f}</option>
-              ))}
-            </select>
+            <input list="fontes-receita" aria-label="Fonte da receita" value={fonte} onChange={(e) => setFonte(e.target.value)} required maxLength={100} placeholder="Escolha ou digite uma nova" style={selectStyle} />
+              <datalist id="fontes-receita">{config.fontes_receita.map(item => <option key={item} value={item} />)}</datalist>
           </div>
 
           <div>

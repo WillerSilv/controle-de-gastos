@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import AuthGate from './components/AuthGate'
-import { escolherMesPadrao, mesAtualChave } from './utils';
+import { escolherMesPadrao, mesAtualChave, dataValida } from './utils';
 import Navbar from './components/Navbar';
 import Overview from './components/Overview';
 import GastosTable from './components/GastosTable';
@@ -13,6 +12,8 @@ import ModalGasto from './components/ModalGasto';
 import ModalReceita from './components/ModalReceita';
 import Toast from './components/Toast';
 import { supabase } from './lib/supabase';
+import { compararMes, limitesCategoria, recorrenciaDisponivel, listarTodos } from './financeiro';
+import { prepararImportacao, gerarCsv } from './csv';
 
 
 async function usuarioSupabase() {
@@ -68,7 +69,7 @@ function calcularResumo(gastos, receitas, mes) {
     acc[forma] = (acc[forma] || 0) + Number(item.valor || 0);
     return acc;
   }, {});
-  const comparacaoVazia = { diferenca: 0, percentual: null };
+
   return {
     mes,
     relatorio: {
@@ -79,11 +80,7 @@ function calcularResumo(gastos, receitas, mes) {
       receitas: receitasMes,
       por_categoria: porCategoria,
     },
-    comparacao: {
-      total_gastos: comparacaoVazia,
-      total_receitas: comparacaoVazia,
-      saldo: comparacaoVazia,
-    },
+    comparacao: compararMes(gastos, receitas, mes || mesAtualChave()),
     orcamento_status: {
       status: 'sem_orcamento',
       orcamento: null,
@@ -111,16 +108,6 @@ function montarMetas(metas, movimentos) {
       aporte_mensal: 0,
     };
   });
-}
-
-function proximaDataRecorrencia(data, frequencia) {
-  const partes = String(data || '').split('/').map(Number);
-  if (partes.length !== 3 || partes.some(Number.isNaN)) return data;
-  const atual = new Date(partes[2], partes[1] - 1, partes[0]);
-  if (frequencia === 'semanal') atual.setDate(atual.getDate() + 7);
-  else if (frequencia === 'anual') atual.setFullYear(atual.getFullYear() + 1);
-  else atual.setMonth(atual.getMonth() + 1);
-  return `${String(atual.getDate()).padStart(2, '0')}/${String(atual.getMonth() + 1).padStart(2, '0')}/${atual.getFullYear()}`;
 }
 
 export default function App({ user }) {
@@ -168,8 +155,8 @@ export default function App({ user }) {
     try {
       const usuario = await usuarioSupabase();
       let [{ data: gastosData, error: gastosError }, { data: receitasData, error: receitasError }, { data: orcamentoData, error: orcamentoError }] = await Promise.all([
-        supabase.from('gastos').select('*').eq('user_id', usuario.id).order('id', { ascending: false }),
-        supabase.from('receitas').select('*').eq('user_id', usuario.id).order('id', { ascending: false }),
+        listarTodos(() => supabase.from('gastos').select('*').eq('user_id', usuario.id).order('id', { ascending: false })).then(data => ({ data })),
+        listarTodos(() => supabase.from('receitas').select('*').eq('user_id', usuario.id).order('id', { ascending: false })).then(data => ({ data })),
         supabase.from('orcamento_global').select('*').eq('user_id', usuario.id).maybeSingle(),
       ]);
 
@@ -183,6 +170,12 @@ export default function App({ user }) {
         throw new Error('Os dados retornados pelo Supabase estão em formato inesperado.');
       }
 
+      const { data: categorias, error: categoriasError } = await supabase.from('categorias').select('*').eq('user_id', usuario.id).eq('ativa', true);
+      if (categoriasError) throw categoriasError;
+      setConfig(atual => ({ ...atual,
+        categorias: [...new Set([...atual.categorias, ...(categorias || []).filter(c => c.tipo === 'gasto').map(c => c.nome), ...resGastos.map(g => g.categoria)])],
+        fontes_receita: [...new Set([...atual.fontes_receita, ...(categorias || []).filter(c => c.tipo === 'receita').map(c => c.nome), ...resReceitas.map(r => r.fonte)])],
+      }));
       setGastos(resGastos || []);
       setReceitas(resReceitas || []);
       setOrcamentoInfo(orcamentoData ? { orcamento: Number(orcamentoData.valor), alerta: Number(orcamentoData.alerta) } : { orcamento: null, alerta: 0.8 });
@@ -194,7 +187,7 @@ export default function App({ user }) {
       if (recorrenciasError) throw recorrenciasError;
       if (metasError) throw metasError;
       if (movimentosError) throw movimentosError;
-      const resRecorrencias = (recorrenciasData || []).map((item) => ({ ...item, id: Number(item.id), proxima_data: item.data_inicio }));
+      const resRecorrencias = (recorrenciasData || []).map((item) => ({ ...item, id: Number(item.id), proxima_data: recorrenciaDisponivel(item) ? item.data_inicio : null }));
       setRecorrencias(resRecorrencias);
       setMetas(montarMetas(metasData, movimentosData));
 
@@ -238,8 +231,8 @@ export default function App({ user }) {
     try {
       const usuario = await usuarioSupabase();
       const [{ data: gastosData, error: gastosError }, { data: receitasData, error: receitasError }] = await Promise.all([
-        supabase.from('gastos').select('*').eq('user_id', usuario.id),
-        supabase.from('receitas').select('*').eq('user_id', usuario.id),
+        listarTodos(() => supabase.from('gastos').select('*').eq('user_id', usuario.id).order('id', { ascending: false })).then(data => ({ data })),
+        listarTodos(() => supabase.from('receitas').select('*').eq('user_id', usuario.id).order('id', { ascending: false })).then(data => ({ data })),
       ]);
       if (gastosError) throw gastosError;
       if (receitasError) throw receitasError;
@@ -266,24 +259,17 @@ export default function App({ user }) {
     }
   }, []);
 
+  const pedidoCategoria = useRef(0);
   const carregarOrcamentosCategoria = useCallback(async (mes) => {
+    const pedido = ++pedidoCategoria.current;
     if (!mes) return;
     try {
       const usuario = await usuarioSupabase();
       const { data, error } = await supabase.from('orcamento_categoria')
         .select('*').eq('user_id', usuario.id).eq('mes', mes).order('categoria');
       if (error) throw error;
-      const itens = data || [];
-      const gastoTotal = gastos.filter((item) => mesDoRegistro(item.data) === mes)
-        .reduce((total, item) => total + Number(item.valor || 0), 0);
-      const limiteTotal = itens.reduce((total, item) => total + Number(item.valor || 0), 0);
-      setOrcamentosCategoria({
-        mes,
-        itens,
-        limite_total: limiteTotal,
-        gasto_total: gastoTotal,
-        saldo_total: limiteTotal - gastoTotal,
-      });
+      if (pedido !== pedidoCategoria.current) return;
+      setOrcamentosCategoria(limitesCategoria(data || [], gastos, mes));
     } catch (err) {
       mostrarToast(err.message, 'error');
     }
@@ -300,6 +286,10 @@ export default function App({ user }) {
       const isEdicao = dadosGasto.id !== undefined;
       const usuario = await usuarioSupabase();
       const payload = { ...dadosGasto, user_id: usuario.id };
+      payload.categoria = payload.categoria.trim();
+      if (!payload.categoria) throw new Error('Informe uma categoria.');
+      const { error: categoriaError } = await supabase.from('categorias').upsert({ user_id: usuario.id, nome: payload.categoria, tipo: 'gasto', ativa: true }, { onConflict: 'user_id,nome,tipo' });
+      if (categoriaError) throw categoriaError;
       delete payload.id;
       const query = isEdicao
         ? supabase.from('gastos').update(payload).eq('id', dadosGasto.id).eq('user_id', usuario.id)
@@ -340,6 +330,10 @@ export default function App({ user }) {
       const isEdicao = dadosReceita.id !== undefined;
       const usuario = await usuarioSupabase();
       const payload = { ...dadosReceita, user_id: usuario.id };
+      payload.fonte = payload.fonte.trim();
+      if (!payload.fonte) throw new Error('Informe uma categoria.');
+      const { error: categoriaError } = await supabase.from('categorias').upsert({ user_id: usuario.id, nome: payload.fonte, tipo: 'receita', ativa: true }, { onConflict: 'user_id,nome,tipo' });
+      if (categoriaError) throw categoriaError;
       delete payload.id;
       const query = isEdicao
         ? supabase.from('receitas').update(payload).eq('id', dadosReceita.id).eq('user_id', usuario.id)
@@ -437,23 +431,20 @@ export default function App({ user }) {
     if (error) throw error;
     if (metasError) throw metasError;
     if (movimentosError) throw movimentosError;
-    setRecorrencias((r || []).map((item) => ({ ...item, id: Number(item.id), proxima_data: item.data_inicio })));
+    setRecorrencias((r || []).map((item) => ({ ...item, id: Number(item.id), proxima_data: recorrenciaDisponivel(item) ? item.data_inicio : null })));
     setMetas(montarMetas(m, movimentos));
   };
-  const salvarRecorrencia = async (dados) => { const usuario = await usuarioSupabase(); const { error } = await supabase.from('recorrencias').insert({ ...dados, user_id: usuario.id, valor: Number(dados.valor) }); if (error) throw error; await recarregarPlanejamento(); mostrarToast('Recorrência criada.'); };
+  const salvarRecorrencia = async (dados) => {
+    if (!dataValida(dados.data_inicio) || (dados.data_fim && !dataValida(dados.data_fim))) throw new Error('Informe datas v?lidas no formato dd/mm/aaaa.');
+    if (dados.data_fim && dados.data_fim.split('/').reverse().join('') < dados.data_inicio.split('/').reverse().join('')) throw new Error('A data final deve ser posterior ou igual ? inicial.');
+    const usuario = await usuarioSupabase(); const { error } = await supabase.from('recorrencias').insert({ ...dados, user_id: usuario.id, valor: Number(dados.valor) }); if (error) throw error; await recarregarPlanejamento(); mostrarToast('Recorrência criada.'); };
   const excluirRecorrencia = async (id) => { if (!window.confirm('Excluir esta recorrência?')) return; const usuario = await usuarioSupabase(); const { error } = await supabase.from('recorrencias').delete().eq('id', id).eq('user_id', usuario.id); if (error) throw error; await recarregarPlanejamento(); };
   const confirmarRecorrencia = async (id) => {
     const item = recorrencias.find((recorrencia) => recorrencia.id === id);
     if (!item?.proxima_data) return;
     const usuario = await usuarioSupabase();
-    const { error: gastoError } = await supabase.from('gastos').insert({
-      user_id: usuario.id, data: item.proxima_data, descricao: item.descricao,
-      categoria: item.categoria, pagamento: item.pagamento, valor: Number(item.valor),
-    });
-    if (gastoError) throw gastoError;
-    const novaData = proximaDataRecorrencia(item.proxima_data, item.frequencia);
-    const { error: atualizacaoError } = await supabase.from('recorrencias').update({ data_inicio: novaData }).eq('id', id).eq('user_id', usuario.id);
-    if (atualizacaoError) throw atualizacaoError;
+    const { error } = await supabase.rpc('confirmar_recorrencia', { p_id: id, p_data: item.proxima_data });
+    if (error) throw error;
     await Promise.all([recarregarPlanejamento(), carregarDados(), carregarResumo(mesSelecionado)]);
     mostrarToast('Ocorrência confirmada.');
   };
@@ -464,41 +455,26 @@ export default function App({ user }) {
   const statusMeta = async (meta, status) => { const usuario = await usuarioSupabase(); const { error } = await supabase.from('metas').update({ status }).eq('id', meta.id).eq('user_id', usuario.id); if (error) throw error; await recarregarPlanejamento(); };
   const importar = async (tipo, csv) => {
     const usuario = await usuarioSupabase();
-    const linhas = csv.trim().split(/\r?\n/).filter(Boolean);
-    if (linhas.length < 2) throw new Error('CSV vazio ou sem cabeçalho.');
-    const separador = linhas[0].includes(';') ? ';' : ',';
-    const cabecalho = linhas.shift().split(separador).map((item) => item.trim().toLowerCase());
-    const registros = linhas.map((linha) => {
-      const valores = linha.split(separador).map((item) => item.trim());
-      const registro = Object.fromEntries(cabecalho.map((chave, indice) => [chave, valores[indice] || '']));
-      return tipo === 'gastos'
-        ? { user_id: usuario.id, data: registro.data, descricao: registro.descricao, categoria: registro.categoria || 'Outros', pagamento: registro.pagamento || 'Pix', valor: Number(String(registro.valor).replace(',', '.')) }
-        : { user_id: usuario.id, data: registro.data, descricao: registro.descricao, fonte: registro.fonte || 'Outros', valor: Number(String(registro.valor).replace(',', '.')) };
-    }).filter((item) => item.data && item.descricao && item.valor > 0);
-    const { error } = await supabase.from(tipo).insert(registros);
-    if (error) throw error;
+    const existentes = await listarTodos(() => supabase.from(tipo).select('*').eq('user_id', usuario.id).order('id'));
+    const { registros, duplicados, erros } = prepararImportacao(tipo, csv, existentes);
+    if (registros.length) {
+      const { error } = await supabase.from(tipo).insert(registros.map(item => ({ ...item, user_id: usuario.id })));
+      if (error) throw error;
+    }
     await Promise.all([carregarDados(), carregarResumo(mesSelecionado)]);
-    return { importados: registros.length, duplicados: 0, erros: [] };
+    return { importados: registros.length, duplicados, erros };
   };
   const exportar = async (tipo) => {
     const usuario = await usuarioSupabase();
-    const tipos = tipo === 'ambos' ? ['gastos', 'receitas'] : [tipo];
-    const arquivos = [];
-    for (const tabela of tipos) {
-      const { data, error } = await supabase.from(tabela).select('*').eq('user_id', usuario.id).order('id');
-      if (error) throw error;
-      const colunas = tabela === 'gastos' ? ['data', 'descricao', 'categoria', 'pagamento', 'valor'] : ['data', 'descricao', 'fonte', 'valor'];
-      const linhas = [colunas.join(';'), ...(data || []).map((item) => colunas.map((coluna) => String(item[coluna] ?? '').replaceAll(';', ',')).join(';'))];
-      arquivos.push({ nome: `${tabela}.csv`, conteudo: linhas.join('\n') });
-    }
-    for (const arquivo of arquivos) {
-      const url = URL.createObjectURL(new Blob([arquivo.conteudo], { type: 'text/csv;charset=utf-8' }));
-      const link = document.createElement('a'); link.href = url; link.download = arquivo.nome; link.click(); URL.revokeObjectURL(url);
+    for (const tabela of tipo === 'ambos' ? ['gastos', 'receitas'] : [tipo]) {
+      const data = await listarTodos(() => supabase.from(tabela).select('*').eq('user_id', usuario.id).order('id'));
+      const url = URL.createObjectURL(new Blob([gerarCsv(tabela, data)], { type: 'text/csv;charset=utf-8' }));
+      const link = document.createElement('a'); link.href = url; link.download = tabela + '.csv'; link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   };
 
   return (
-    <AuthGate>
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar
         user={user}
@@ -560,6 +536,7 @@ export default function App({ user }) {
 
         {abaAtiva === 'orcamento' && (
           <OrcamentoView
+            config={config}
             orcamentoInfo={orcamentoInfo}
             resumo={resumo}
             mesSelecionado={mesSelecionado}
@@ -594,6 +571,5 @@ export default function App({ user }) {
       {/* Toast Notificações */}
       <Toast toast={toast} onClose={() => setToast(null)} />
       </div>
-    </AuthGate>
   );
 }
